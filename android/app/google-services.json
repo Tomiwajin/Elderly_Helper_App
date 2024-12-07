@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "995323281278",
+    "project_id": "elder-home-app",
+    "storage_bucket": "elder-home-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995323281278:android:c289e6646eea9646227d2f",
+        "android_client_info": {
+          "package_name": "com.example.elderly_helper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQXJxE6sTJrzd71zirqr-Sy9p76VVEfYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
