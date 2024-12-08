@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:elderly_helper/src/home_screen.dart';
-import 'package:elderly_helper/src/emergency_help_screen.dart';
-import 'package:elderly_helper/src/non_emergency_help_screen.dart';
-import 'package:elderly_helper/src/near_me_map_screen.dart';
-import 'package:elderly_helper/src/request_meal_screen.dart';
+import 'src/login_screen.dart';
+import 'src/home_screen.dart';
+import 'src/near_me_map_screen.dart';
 
 class Routes {
+  static const String loginScreen = '/login';
+  static const String homeScreen = '/home';
+  static const String mapScreen = '/map';
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case '/home':
+      case homeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case '/emergency':
-        return MaterialPageRoute(builder: (_) => const EmergencyHelpScreen());
-      case '/non_emergency':
-        return MaterialPageRoute(builder: (_) => const NonEmergencyHelpScreen());
-      case '/request_meal':
-        return MaterialPageRoute(builder: (_) => const RequestMealScreen());
-      case '/near_me_map':
+      case loginScreen:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case mapScreen:
         return MaterialPageRoute(builder: (_) => const NearMeMapScreen());
       default:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
     }
   }
 }

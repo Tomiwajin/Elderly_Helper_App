@@ -1,14 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:elderly_helper/src/home_screen.dart';
 import 'emergency_help_screen.dart';
 import 'non_emergency_help_screen.dart';
 import 'request_meal_screen.dart';
-import 'package:elderly_helper/battery_status_widget.dart'; // Import the Battery Status Widget
+import 'package:elderly_helper/battery_status_widget.dart';
 
-class NearMeMapScreen extends StatelessWidget {
+class NearMeMapScreen extends StatefulWidget {
   const NearMeMapScreen({Key? key}) : super(key: key);
 
+  @override
+  _NearMeMapScreenState createState() => _NearMeMapScreenState();
+}
+
+class _NearMeMapScreenState extends State<NearMeMapScreen> {
+  GoogleMapController? mapController;
+  LatLng? currentLocation; // Holds the current location
+  bool isLoading = true; // Indicates if the app is still determining location
+  final Set<Marker> _markers = {}; // Markers set to ensure uniqueness
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  /// Determines user's current position
+  Future<void> _determinePosition() async {
+    try {
+      // Fetch location
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      final latLngPosition = LatLng(position.latitude, position.longitude);
+
+      setState(() {
+        currentLocation = latLngPosition;
+        isLoading = false;
+        _addMarker();
+      });
+    } catch (e) {
+      print('Error determining location: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  /// Adds a marker at the user's current location
+  void _addMarker() {
+    if (currentLocation != null) {
+      setState(() {
+        _markers.clear(); // Clear any existing markers
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('user_marker'),
+            position: currentLocation!,
+            infoWindow: const InfoWindow(
+              title: 'You are here',
+            ),
+          ),
+        );
+      });
+    }
+  }
+
+  /// Handles logout
   Future<void> _logout(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -26,6 +86,7 @@ class NearMeMapScreen extends StatelessWidget {
     }
   }
 
+  /// Builds the navigation menu
   Widget _buildNavigationMenu(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.menu),
@@ -76,6 +137,7 @@ class NearMeMapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -92,7 +154,7 @@ class NearMeMapScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          const BatteryStatusWidget(), // Add the Battery Status Widget here
+          const BatteryStatusWidget(),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
@@ -100,12 +162,27 @@ class NearMeMapScreen extends StatelessWidget {
           _buildNavigationMenu(context),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Near Me Map Content Here',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : currentLocation == null
+              ? const Center(
+                  child: Text(
+                    'Could not determine your location',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                )
+              : GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: currentLocation!,
+                    zoom: 15,
+                  ),
+                  onMapCreated: (controller) {
+                    mapController = controller;
+                  },
+                  markers: _markers, // Dynamically render markers
+                ),
     );
   }
 }
