@@ -39,7 +39,8 @@ dependencies:
   firebase_auth: ^5.3.4
   provider: ^6.1.2
   firebase_ui_auth: ^1.16.0
-  battery_plus: ^2.0.0
+  battery_plus: ^6.2.0
+  battery: ^2.0.3
 
 dev_dependencies:
   flutter_test:

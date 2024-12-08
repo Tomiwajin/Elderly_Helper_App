@@ -5,7 +5,7 @@
 import FlutterMacOS
 import Foundation
 
-import battery_plus_macos
+import battery_plus
 import desktop_webview_auth
 import firebase_auth
 import firebase_core
