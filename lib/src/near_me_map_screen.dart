@@ -17,9 +17,9 @@ class NearMeMapScreen extends StatefulWidget {
 
 class _NearMeMapScreenState extends State<NearMeMapScreen> {
   GoogleMapController? mapController;
-  LatLng? currentLocation; // Holds the current location
-  bool isLoading = true; // Indicates if the app is still determining location
-  final Set<Marker> _markers = {}; // Markers set to ensure uniqueness
+  LatLng? currentLocation;
+  bool isLoading = true;
+  final Set<Marker> _markers = {};
 
   @override
   void initState() {
@@ -30,7 +30,6 @@ class _NearMeMapScreenState extends State<NearMeMapScreen> {
   /// Determines user's current position
   Future<void> _determinePosition() async {
     try {
-      // Fetch location
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -54,7 +53,7 @@ class _NearMeMapScreenState extends State<NearMeMapScreen> {
   void _addMarker() {
     if (currentLocation != null) {
       setState(() {
-        _markers.clear(); // Clear any existing markers
+        _markers.clear();
         _markers.add(
           Marker(
             markerId: const MarkerId('user_marker'),
@@ -181,7 +180,7 @@ class _NearMeMapScreenState extends State<NearMeMapScreen> {
                   onMapCreated: (controller) {
                     mapController = controller;
                   },
-                  markers: _markers, // Dynamically render markers
+                  markers: _markers,
                 ),
     );
   }

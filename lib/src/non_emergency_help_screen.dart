@@ -2,10 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:elderly_helper/src/home_screen.dart';
 import 'request_meal_screen.dart';
+import 'calendar_screen.dart';
+import 'picture_taking_screen.dart';
+import 'near_me_map_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart'; // Import the Battery Status Widget
 
-class NonEmergencyHelpScreen extends StatelessWidget {
+class NonEmergencyHelpScreen extends StatefulWidget {
   const NonEmergencyHelpScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NonEmergencyHelpScreen> createState() => _NonEmergencyHelpScreenState();
+}
+
+class _NonEmergencyHelpScreenState extends State<NonEmergencyHelpScreen> {
+  int _selectedIndex = 0; // Track the selected index of BottomNavigationBar
+
+  // Define screens for each tab
+  final List<Widget> _screens = [
+    const NonEmergencyHelpScreenContent(), // Non-Emergency Help screen content
+    const BrowseScreen(), // Placeholder for Browse screen
+    const TextToSpeechScreen(), // Placeholder for Text-to-Speech screen
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   Future<void> _logout(BuildContext context) async {
     try {
@@ -35,6 +58,9 @@ class NonEmergencyHelpScreen extends StatelessWidget {
           items: [
             const PopupMenuItem(value: 'home', child: Text('Home')),
             const PopupMenuItem(value: 'request_meal', child: Text('Request Meal')),
+            const PopupMenuItem(value: 'calendar', child: Text('Calendar')),
+            const PopupMenuItem(value: 'take_picture', child: Text('Take Picture')),
+            const PopupMenuItem(value: 'near_me', child: Text('Near Me Map')),
           ],
         ).then((value) {
           if (value != null) {
@@ -51,6 +77,24 @@ class NonEmergencyHelpScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const RequestMealScreen()),
                 );
                 break;
+              case 'calendar':
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CalendarScreen()),
+                );
+                break;
+              case 'take_picture':
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PictureTakingScreen()),
+                );
+                break;
+              case 'near_me':
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NearMeMapScreen()),
+                );
+                break;
             }
           }
         });
@@ -61,6 +105,7 @@ class NonEmergencyHelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -77,7 +122,7 @@ class NonEmergencyHelpScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          const BatteryStatusWidget(), // Added the Battery Status Widget here
+          const BatteryStatusWidget(), // Add the Battery Status Widget here
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
@@ -85,12 +130,59 @@ class NonEmergencyHelpScreen extends StatelessWidget {
           _buildNavigationMenu(context),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Non-Emergency Help Content Here',
-          style: TextStyle(fontSize: 18),
-        ),
+      body: _screens[_selectedIndex], // Dynamically load the selected screen
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped, // Update index on tap
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.healing),
+            label: 'Non-Emergency',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Browse',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.record_voice_over),
+            label: 'Text-to-Speech',
+          ),
+        ],
       ),
     );
+  }
+}
+
+class NonEmergencyHelpScreenContent extends StatelessWidget {
+  const NonEmergencyHelpScreenContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Non-Emergency Help Content Here',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// Placeholder widget for Browse screen
+class BrowseScreen extends StatelessWidget {
+  const BrowseScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Browse Screen Content'));
+  }
+}
+
+// Placeholder widget for Text-to-Speech screen
+class TextToSpeechScreen extends StatelessWidget {
+  const TextToSpeechScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Text-to-Speech Screen Content'));
   }
 }

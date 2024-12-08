@@ -7,14 +7,38 @@ import 'request_meal_screen.dart';
 import 'near_me_map_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  int _selectedIndex = 0; // Index for BottomNavigationBar
+
+  // Define screens for the BottomNavigationBar
+  final List<Widget> _screens = [
+    const CalendarContent(), // Calendar view content
+    const EventsContent(),   // Placeholder for Events view
+    const RemindersContent(), // Placeholder for Reminders view
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   Future<void> _logout(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logged out successfully')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,9 +112,9 @@ class CalendarScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Calendar',
-              style: const TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18),
             ),
             Text(
               user?.email ?? 'Not logged in',
@@ -99,18 +123,76 @@ class CalendarScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          const BatteryStatusWidget(), // Battery status now before the logout button
+          const BatteryStatusWidget(), // Display battery status
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Calendar Content Here',
-          style: TextStyle(fontSize: 18),
-        ),
+      body: _screens[_selectedIndex], // Display the selected screen
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped, // Change index on tap
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: 'Events',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.alarm),
+            label: 'Reminders',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Placeholder for Calendar Content
+class CalendarContent extends StatelessWidget {
+  const CalendarContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Calendar Content Here',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// Placeholder for Events Content
+class EventsContent extends StatelessWidget {
+  const EventsContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Events Content Here',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// Placeholder for Reminders Content
+class RemindersContent extends StatelessWidget {
+  const RemindersContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Reminders Content Here',
+        style: TextStyle(fontSize: 18),
       ),
     );
   }

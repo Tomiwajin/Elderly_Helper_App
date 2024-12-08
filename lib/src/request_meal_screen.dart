@@ -6,8 +6,28 @@ import 'non_emergency_help_screen.dart';
 import 'near_me_map_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart';
 
-class RequestMealScreen extends StatelessWidget {
+class RequestMealScreen extends StatefulWidget {
   const RequestMealScreen({Key? key}) : super(key: key);
+
+  @override
+  State<RequestMealScreen> createState() => _RequestMealScreenState();
+}
+
+class _RequestMealScreenState extends State<RequestMealScreen> {
+  int _selectedIndex = 0; // Track the selected index for BottomNavigationBar
+
+  // Define screens for each tab
+  final List<Widget> _screens = [
+    const RequestMealScreenContent(), // Request Meal content
+    const BrowseScreen(), // Placeholder for Browse screen
+    const TextToSpeechScreen(), // Placeholder for Text-to-Speech screen
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   Future<void> _logout(BuildContext context) async {
     try {
@@ -102,12 +122,59 @@ class RequestMealScreen extends StatelessWidget {
           _buildNavigationMenu(context),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Request Meal Content Here',
-          style: TextStyle(fontSize: 18),
-        ),
+      body: _screens[_selectedIndex], // Dynamically load the selected screen
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped, // Update index on tap
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fastfood),
+            label: 'Request Meal',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Browse',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.record_voice_over),
+            label: 'Text-to-Speech',
+          ),
+        ],
       ),
     );
+  }
+}
+
+class RequestMealScreenContent extends StatelessWidget {
+  const RequestMealScreenContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Request Meal Content Here',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// Placeholder widget for Browse screen
+class BrowseScreen extends StatelessWidget {
+  const BrowseScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Browse Screen Content'));
+  }
+}
+
+// Placeholder widget for Text-to-Speech screen
+class TextToSpeechScreen extends StatelessWidget {
+  const TextToSpeechScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Text-to-Speech Screen Content'));
   }
 }

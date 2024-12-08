@@ -4,11 +4,34 @@ import 'package:elderly_helper/src/home_screen.dart';
 import 'emergency_help_screen.dart';
 import 'non_emergency_help_screen.dart';
 import 'near_me_map_screen.dart';
-import 'package:elderly_helper/battery_status_widget.dart'; // Import the Battery Status Widget
+import 'package:elderly_helper/battery_status_widget.dart';
 
-class PictureTakingScreen extends StatelessWidget {
+// Main screen for Picture Taking functionalities
+class PictureTakingScreen extends StatefulWidget {
   const PictureTakingScreen({Key? key}) : super(key: key);
 
+  @override
+  State<PictureTakingScreen> createState() => _PictureTakingScreenState();
+}
+
+class _PictureTakingScreenState extends State<PictureTakingScreen> {
+  int _selectedIndex = 0;
+
+  // Screens for BottomNavigationBar
+  final List<Widget> _screens = [
+    const PictureTakingContent(),
+    const GalleryContent(),
+    const CameraSettingsContent(),
+  ];
+
+  // Handles tab navigation
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  // Handles logout
   Future<void> _logout(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -26,6 +49,7 @@ class PictureTakingScreen extends StatelessWidget {
     }
   }
 
+  // Builds navigation menu from popup menu
   Widget _buildNavigationMenu(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.menu),
@@ -42,41 +66,47 @@ class PictureTakingScreen extends StatelessWidget {
           ],
         ).then((value) {
           if (value != null) {
-            switch (value) {
-              case 'home':
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
-                );
-                break;
-              case 'emergency':
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EmergencyHelpScreen()),
-                );
-                break;
-              case 'non_emergency':
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const NonEmergencyHelpScreen()),
-                );
-                break;
-              case 'near_me_map':
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const NearMeMapScreen()),
-                );
-                break;
-            }
+            _navigateToMenuOption(context, value);
           }
         });
       },
     );
   }
 
+  // Handle navigation menu options
+  void _navigateToMenuOption(BuildContext context, String value) {
+    switch (value) {
+      case 'home':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+      case 'emergency':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const EmergencyHelpScreen()),
+        );
+        break;
+      case 'non_emergency':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const NonEmergencyHelpScreen()),
+        );
+        break;
+      case 'near_me_map':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const NearMeMapScreen()),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -93,19 +123,77 @@ class PictureTakingScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          const BatteryStatusWidget(), // Added the Battery Status Widget
+          const BatteryStatusWidget(),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
           ),
-          _buildNavigationMenu(context),
+        ],
+        leading: _buildNavigationMenu(context),
+      ),
+      body: _screens[_selectedIndex], // Dynamic content based on navigation tab selection
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.camera_alt),
+            label: 'Take Picture',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.photo_library),
+            label: 'Gallery',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Picture Taking Content Here',
-          style: TextStyle(fontSize: 18),
-        ),
+    );
+  }
+}
+
+// Picture Taking Placeholder Widget
+class PictureTakingContent extends StatelessWidget {
+  const PictureTakingContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Picture Taking Content Here',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// Gallery Placeholder Widget
+class GalleryContent extends StatelessWidget {
+  const GalleryContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Gallery Content Here',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// Camera Settings Placeholder Widget
+class CameraSettingsContent extends StatelessWidget {
+  const CameraSettingsContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'Camera Settings Content Here',
+        style: TextStyle(fontSize: 18),
       ),
     );
   }
