@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // Required for JSON encoding and decoding
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:elderly_helper/src/home_screen.dart';
+import 'package:elderly_helper/src/home_screen.dart'; // Import HomeScreen
 import 'request_meal_screen.dart';
 import 'calendar_screen.dart';
 import 'picture_taking_screen.dart';
@@ -17,7 +19,6 @@ class NonEmergencyHelpScreen extends StatefulWidget {
 class _NonEmergencyHelpScreenState extends State<NonEmergencyHelpScreen> {
   int _selectedIndex = 0; // Track the selected index of BottomNavigationBar
 
-  // Define screens for each tab
   final List<Widget> _screens = [
     const NonEmergencyHelpScreenContent(), // Non-Emergency Help screen content
     const BrowseScreen(), // Placeholder for Browse screen
@@ -153,15 +154,103 @@ class _NonEmergencyHelpScreenState extends State<NonEmergencyHelpScreen> {
   }
 }
 
-class NonEmergencyHelpScreenContent extends StatelessWidget {
+class NonEmergencyHelpScreenContent extends StatefulWidget {
   const NonEmergencyHelpScreenContent({super.key});
 
   @override
+  _NonEmergencyHelpScreenContentState createState() =>
+      _NonEmergencyHelpScreenContentState();
+}
+
+class _NonEmergencyHelpScreenContentState
+    extends State<NonEmergencyHelpScreenContent> {
+  final _requesterController = TextEditingController();
+  final _typeController = TextEditingController(text: 'Non-Emergency Help'); // Pre-set to Non-Emergency Help
+  bool _isSubmitting = false;
+  String _errorMessage = '';
+
+  // Function to submit the help request
+  Future<void> _submitHelpRequest() async {
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = '';
+    });
+
+    // Prepare help request data
+    final helpRequest = {
+      'requester': _requesterController.text,
+      'requestTime': DateTime.now().toIso8601String(), // Automatically set to current time
+      'type': _typeController.text, // Pre-set to 'Non-Emergency Help'
+    };
+
+    try {
+      // Send POST request to the backend
+      final response = await http.post(
+        Uri.parse('http://yoursite/api/v1/help'), // Replace with your API URL
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(helpRequest),
+      );
+
+      if (response.statusCode == 200) {
+        // Successfully recorded the help request
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Help request received')),
+        );
+        _requesterController.clear();
+      } else {
+        setState(() {
+          _errorMessage = 'Failed to submit request';
+        });
+        print('Failed to submit help request: ${response.body}');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred: $e';
+      });
+      print('Error: $e');
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Non-Emergency Help Content Here',
-        style: TextStyle(fontSize: 18),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Requester Name Input
+          TextField(
+            controller: _requesterController,
+            decoration: const InputDecoration(labelText: 'Requester Name'),
+          ),
+          // Request Type (Non-Emergency Help) pre-filled and read-only
+          TextField(
+            controller: _typeController,
+            decoration: const InputDecoration(labelText: 'Request Type'),
+            readOnly: true, // Make this field non-editable
+          ),
+          const SizedBox(height: 20),
+          // Submit Button or Loading Indicator
+          _isSubmitting
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  onPressed: _submitHelpRequest,
+                  child: const Text('Submit Request'),
+                ),
+          // Error Message Display
+          if (_errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                _errorMessage,
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+        ],
       ),
     );
   }

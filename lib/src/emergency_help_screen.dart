@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:elderly_helper/src/home_screen.dart';
-import 'non_emergency_help_screen.dart';
+import 'package:elderly_helper/src/home_screen.dart'; // Import HomeScreen
+import 'non_emergency_help_screen.dart'; // Import Non-Emergency Help screen
 import 'request_meal_screen.dart';
 import 'calendar_screen.dart';
 import 'picture_taking_screen.dart';
 import 'near_me_map_screen.dart';
-import 'package:elderly_helper/battery_status_widget.dart'; // Import the Battery Status Widget
+import 'package:elderly_helper/battery_status_widget.dart'; // Battery status widget
+
 
 class EmergencyHelpScreen extends StatefulWidget {
   const EmergencyHelpScreen({super.key});
@@ -18,7 +21,6 @@ class EmergencyHelpScreen extends StatefulWidget {
 class _EmergencyHelpScreenState extends State<EmergencyHelpScreen> {
   int _selectedIndex = 0; // Track the selected index of BottomNavigationBar
 
-  // Define screens for each tab
   final List<Widget> _screens = [
     const EmergencyHelpScreenContent(), // Emergency Help screen content
     const BrowseScreen(), // Placeholder for Browse screen
@@ -130,7 +132,7 @@ class _EmergencyHelpScreenState extends State<EmergencyHelpScreen> {
           ],
         ),
         actions: [
-          const BatteryStatusWidget(), // Add the Battery Status Widget here
+          const BatteryStatusWidget(),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
@@ -161,15 +163,98 @@ class _EmergencyHelpScreenState extends State<EmergencyHelpScreen> {
   }
 }
 
-class EmergencyHelpScreenContent extends StatelessWidget {
+class EmergencyHelpScreenContent extends StatefulWidget {
   const EmergencyHelpScreenContent({super.key});
 
   @override
+  _EmergencyHelpScreenContentState createState() =>
+      _EmergencyHelpScreenContentState();
+}
+
+class _EmergencyHelpScreenContentState extends State<EmergencyHelpScreenContent> {
+  final _requesterController = TextEditingController();
+  final _typeController = TextEditingController(text: 'Emergency Help'); // Automatically set to Emergency Help
+  bool _isSubmitting = false;
+  String _errorMessage = '';
+
+  Future<void> _submitHelpRequest() async {
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = '';
+    });
+
+    // Prepare help request data
+    final helpRequest = {
+      'requester': _requesterController.text,
+      'requestTime': DateTime.now().toIso8601String(), // Current time
+      'type': _typeController.text, // Automatically set to 'Emergency Help'
+    };
+
+    try {
+      // Send POST request to the backend
+      final response = await http.post(
+        Uri.parse('http://localhost:8080/api/v1/help'), // Replace with your API URL
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(helpRequest),
+      );
+
+      if (response.statusCode == 200) {
+        // Successfully recorded the help request
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Help request received')),
+        );
+        _requesterController.clear();
+      } else {
+        setState(() {
+          _errorMessage = 'Failed to submit request';
+        });
+        print('Failed to submit help request: ${response.body}');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred: $e';
+      });
+      print('Error: $e');
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Emergency Help Content Here',
-        style: TextStyle(fontSize: 18),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _requesterController,
+            decoration: const InputDecoration(labelText: 'Requester Name'),
+          ),
+          // Make the Request Type field read-only and auto-set to 'Emergency Help'
+          TextField(
+            controller: _typeController,
+            decoration: const InputDecoration(labelText: 'Request Type'),
+            readOnly: true, // Make this field non-editable
+          ),
+          const SizedBox(height: 20),
+          _isSubmitting
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  onPressed: _submitHelpRequest,
+                  child: const Text('Submit Request'),
+                ),
+          if (_errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                _errorMessage,
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+        ],
       ),
     );
   }
