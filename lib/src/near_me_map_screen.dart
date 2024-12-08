@@ -9,7 +9,7 @@ import 'request_meal_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart';
 
 class NearMeMapScreen extends StatefulWidget {
-  const NearMeMapScreen({Key? key}) : super(key: key);
+  const NearMeMapScreen({super.key});
 
   @override
   _NearMeMapScreenState createState() => _NearMeMapScreenState();

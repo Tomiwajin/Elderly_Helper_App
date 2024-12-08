@@ -5,9 +5,10 @@ import 'emergency_help_screen.dart';
 import 'non_emergency_help_screen.dart';
 import 'near_me_map_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart';
+import 'breakfast_list_screen.dart'; // Import the BreakfastListScreen
 
 class RequestMealScreen extends StatefulWidget {
-  const RequestMealScreen({Key? key}) : super(key: key);
+  const RequestMealScreen({super.key});
 
   @override
   State<RequestMealScreen> createState() => _RequestMealScreenState();
@@ -146,14 +147,61 @@ class _RequestMealScreenState extends State<RequestMealScreen> {
 }
 
 class RequestMealScreenContent extends StatelessWidget {
-  const RequestMealScreenContent({Key? key}) : super(key: key);
+  const RequestMealScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Request Meal Content Here',
-        style: TextStyle(fontSize: 18),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Breakfast icon with navigation functionality
+          GestureDetector(
+            onTap: () {
+              // Navigate to the Breakfast List screen when the icon is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BreakfastListScreen()),
+              );
+            },
+            child: const Column(
+              children: [
+                Icon(
+                  Icons.fastfood,
+                  size: 80.0,
+                  color: Colors.orange,
+                ),
+                Text('Breakfast', style: TextStyle(fontSize: 18)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // Lunch icon without functionality (only labeled)
+          const Column(
+            children: [
+              Icon(
+                Icons.local_dining,
+                size: 80.0,
+                color: Colors.green,
+              ),
+              Text('Lunch', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+          const SizedBox(height: 20),
+          
+          // Dinner icon without functionality (only labeled)
+          const Column(
+            children: [
+              Icon(
+                Icons.dinner_dining,
+                size: 80.0,
+                color: Colors.red,
+              ),
+              Text('Dinner', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -161,7 +209,7 @@ class RequestMealScreenContent extends StatelessWidget {
 
 // Placeholder widget for Browse screen
 class BrowseScreen extends StatelessWidget {
-  const BrowseScreen({Key? key}) : super(key: key);
+  const BrowseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +219,7 @@ class BrowseScreen extends StatelessWidget {
 
 // Placeholder widget for Text-to-Speech screen
 class TextToSpeechScreen extends StatelessWidget {
-  const TextToSpeechScreen({Key? key}) : super(key: key);
+  const TextToSpeechScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ import 'near_me_map_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart'; // Import the Battery Status Widget
 
 class EmergencyHelpScreen extends StatefulWidget {
-  const EmergencyHelpScreen({Key? key}) : super(key: key);
+  const EmergencyHelpScreen({super.key});
 
   @override
   State<EmergencyHelpScreen> createState() => _EmergencyHelpScreenState();
@@ -162,7 +162,7 @@ class _EmergencyHelpScreenState extends State<EmergencyHelpScreen> {
 }
 
 class EmergencyHelpScreenContent extends StatelessWidget {
-  const EmergencyHelpScreenContent({Key? key}) : super(key: key);
+  const EmergencyHelpScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +177,7 @@ class EmergencyHelpScreenContent extends StatelessWidget {
 
 // Placeholder widget for Browse screen
 class BrowseScreen extends StatelessWidget {
-  const BrowseScreen({Key? key}) : super(key: key);
+  const BrowseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +187,7 @@ class BrowseScreen extends StatelessWidget {
 
 // Placeholder widget for Text-to-Speech screen
 class TextToSpeechScreen extends StatelessWidget {
-  const TextToSpeechScreen({Key? key}) : super(key: key);
+  const TextToSpeechScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

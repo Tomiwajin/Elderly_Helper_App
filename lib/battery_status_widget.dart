@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:battery_plus/battery_plus.dart';
 
 class BatteryStatusWidget extends StatefulWidget {
-  const BatteryStatusWidget({Key? key}) : super(key: key);
+  const BatteryStatusWidget({super.key});
 
   @override
   _BatteryStatusWidgetState createState() => _BatteryStatusWidgetState();

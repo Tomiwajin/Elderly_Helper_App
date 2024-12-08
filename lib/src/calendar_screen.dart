@@ -8,7 +8,7 @@ import 'near_me_map_screen.dart';
 import 'package:elderly_helper/battery_status_widget.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
+  const CalendarScreen({super.key});
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
@@ -155,7 +155,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
 // Placeholder for Calendar Content
 class CalendarContent extends StatelessWidget {
-  const CalendarContent({Key? key}) : super(key: key);
+  const CalendarContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +170,7 @@ class CalendarContent extends StatelessWidget {
 
 // Placeholder for Events Content
 class EventsContent extends StatelessWidget {
-  const EventsContent({Key? key}) : super(key: key);
+  const EventsContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +185,7 @@ class EventsContent extends StatelessWidget {
 
 // Placeholder for Reminders Content
 class RemindersContent extends StatelessWidget {
-  const RemindersContent({Key? key}) : super(key: key);
+  const RemindersContent({super.key});
 
   @override
   Widget build(BuildContext context) {

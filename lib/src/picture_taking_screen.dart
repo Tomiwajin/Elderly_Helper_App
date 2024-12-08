@@ -8,7 +8,7 @@ import 'package:elderly_helper/battery_status_widget.dart';
 
 // Main screen for Picture Taking functionalities
 class PictureTakingScreen extends StatefulWidget {
-  const PictureTakingScreen({Key? key}) : super(key: key);
+  const PictureTakingScreen({super.key});
 
   @override
   State<PictureTakingScreen> createState() => _PictureTakingScreenState();
@@ -156,7 +156,7 @@ class _PictureTakingScreenState extends State<PictureTakingScreen> {
 
 // Picture Taking Placeholder Widget
 class PictureTakingContent extends StatelessWidget {
-  const PictureTakingContent({Key? key}) : super(key: key);
+  const PictureTakingContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class PictureTakingContent extends StatelessWidget {
 
 // Gallery Placeholder Widget
 class GalleryContent extends StatelessWidget {
-  const GalleryContent({Key? key}) : super(key: key);
+  const GalleryContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +186,7 @@ class GalleryContent extends StatelessWidget {
 
 // Camera Settings Placeholder Widget
 class CameraSettingsContent extends StatelessWidget {
-  const CameraSettingsContent({Key? key}) : super(key: key);
+  const CameraSettingsContent({super.key});
 
   @override
   Widget build(BuildContext context) {
