@@ -41,6 +41,8 @@ dependencies:
   firebase_ui_auth: ^1.16.0
   battery_plus: ^6.2.0
   battery: ^2.0.3
+  location: ^7.0.1
+  google_maps_flutter: ^2.10.0
 
 dev_dependencies:
   flutter_test:
